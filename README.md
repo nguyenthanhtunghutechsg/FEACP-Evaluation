@@ -38,5 +38,4 @@
 <h2 >Author</h2>
 <ul>
 <li>Bay Vo et al.</li>
-
 </ul>
