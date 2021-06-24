@@ -21,7 +21,7 @@
 <ul>
 <li><p>Each dataset includes 1 dataset file containing transaction information and 1 taxonomy file containing hierarchical information</p>
 <ul>
-<li>File dataset: named as <name dataset>.txt contains transaction information. Each transaction consists of 3 parts, separated by a &quot;:&quot; character. Part 1 includes the item id, part 2 is transaction utility and the rest will contain the utility of each item in the transaction.</li>
+<li>File dataset: named as &quot;name dataset&quot;.txt contains transaction information. Each transaction consists of 3 parts, separated by a &quot;:&quot; character. Part 1 includes the item id, part 2 is transaction utility and the rest will contain the utility of each item in the transaction.</li>
 <li>File Taxonomy: named as &quot;namedataset&quot;Taxonomy.txt contains information about the relationships of the items. relationships represented by child-parent pairs.</li>
 
 </ul>
