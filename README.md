@@ -12,7 +12,7 @@
 <li><p>The source code of the project is located in the &quot;src&quot; folder with the following details:</p>
 <ul>
 <li>FEACP: /tree/master/src/FEACP</li>
-<li>FEACP:/tree/master/src/FEACPLu</li>
+<li>FEACP(lu):/tree/master/src/FEACPLu</li>
 <li>CLH-Miner: tree/master/src/CLHMiner</li>
 
 </ul>
