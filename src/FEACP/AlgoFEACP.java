@@ -48,9 +48,9 @@ public class AlgoFEACP {
 	 * correspond to an item
 	 */
 	/** utility bin array for sub-tree utility */
-	private double[] utilityBinArraySU;
+	private float[] utilityBinArraySU;
 	/** utility bin array for local utility */
-	private double[] utilityBinArrayLU;
+	private float[] utilityBinArrayLU;
 
 	/** a temporary buffer */
 	private int[] temp = new int[500];
@@ -202,7 +202,7 @@ public class AlgoFEACP {
 		// remember the number of promising item
 		newItemCount = itemsToKeep.size();
 		// initialize the utility-bin array for counting the subtree utility
-		utilityBinArraySU = new double[newItemCount + 1];
+		utilityBinArraySU = new float[newItemCount + 1];
 
 		// if in debug mode, print to the old names and new names to the console
 		// to check if they are correct
@@ -296,17 +296,17 @@ public class AlgoFEACP {
 	 * @param items list of integers to be sorted
 	 * @param items list the utility-bin array indicating the TWU of each item.
 	 */
-	public static void insertionSort(List<Integer> items, double[] utilityBinArrayTWU, TaxonomyTree taxonomy) {
+	public static void insertionSort(List<Integer> items, float[] utilityBinArrayTWU, TaxonomyTree taxonomy) {
 		// the following lines are simply a modified an insertion sort
 
 		for (int j = 1; j < items.size(); j++) {
 			Integer itemJ = items.get(j);
 			int i = j - 1;
 			Integer itemI = items.get(i);
-			double comparison = taxonomy.getMapItemToTaxonomyNode().get(itemI).getLevel()
+			float comparison = taxonomy.getMapItemToTaxonomyNode().get(itemI).getLevel()
 					- taxonomy.getMapItemToTaxonomyNode().get(itemJ).getLevel();
 			if (comparison == 0) {
-				comparison = (double) (utilityBinArrayTWU[itemI] - utilityBinArrayTWU[itemJ]);
+				comparison = (float) (utilityBinArrayTWU[itemI] - utilityBinArrayTWU[itemJ]);
 			}
 			while (comparison > 0) {
 				items.set(i + 1, itemI);
@@ -321,7 +321,7 @@ public class AlgoFEACP {
 				// greater
 				// than j or not.
 				if (comparison == 0) {
-					comparison = (double) (utilityBinArrayTWU[itemI] - utilityBinArrayTWU[itemJ]);
+					comparison = (float) (utilityBinArrayTWU[itemI] - utilityBinArrayTWU[itemJ]);
 				}
 			}
 			items.set(i + 1, itemJ);
@@ -341,11 +341,11 @@ public class AlgoFEACP {
 			List<Integer> itemsToExplore, int prefixLength) throws IOException {
 
 		// update the number of candidates explored so far
-		candidateCount += itemsToExplore.size();
+		//candidateCount += itemsToExplore.size();
 
 		// ======== for each frequent item e =============
 		for (int x = 0; x < itemsToExplore.size(); x++) {
-
+			candidateCount++;
 			Integer e = itemsToExplore.get(x);
 
 			// ========== PERFORM INTERSECTION =====================
@@ -354,7 +354,7 @@ public class AlgoFEACP {
 			List<Transaction> transactionsPe = new ArrayList<Transaction>();
 
 			// variable to calculate the utility of P U {e}
-			double utilityPe = 0;
+			float utilityPe = 0;
 
 			// For merging transactions, we will keep track of the last transaction read
 			// and the number of identical consecutive transactions
@@ -396,9 +396,7 @@ public class AlgoFEACP {
 								taxonomy);
 						utilityPe += projectedTransaction.prefixUtility;
 						transactionsPe.add(projectedTransaction);
-						transaction.offset = positionE;
-					} else {
-						transaction.offset = low;
+						
 					}
 				}
 			} else {
@@ -489,7 +487,7 @@ public class AlgoFEACP {
 	public void useUtilityBinArrayToCalculateLocalUtilityFirstTime(Dataset dataset) {
 
 		// Initialize utility bins for all items
-		utilityBinArrayLU = new double[dataset.getMaxItem() + 1];
+		utilityBinArrayLU = new float[dataset.getMaxItem() + 1];
 
 		HashSet<Integer> SetParent;
 		// Scan the database to fill the utility bins
@@ -523,27 +521,27 @@ public class AlgoFEACP {
 	 */
 	public void useUtilityBinArrayToCalculateSubtreeUtilityFirstTime(Dataset dataset) {
 
-		double sumSU;
+		float sumSU;
 		// Scan the database to fill the utility-bins of each item
 		// For each transaction
 		for (Transaction transaction : dataset.getTransactions()) {
 			// We will scan the transaction backward. Thus,
 			// the current sub-tree utility in that transaction is zero
 			// for the last item of the transaction.
-			sumSU = 0;
+			sumSU = transaction.transactionUtility;
 
 			// For each item when reading the transaction backward
-			for (int i = transaction.getItems().length - 1; i >= 0; i--) {
+			for (int i = 0; i < transaction.getItems().length ; i++){
 				// get the item
 				Integer item = transaction.getItems()[i];
-
 				// we add the utility of the current item to its sub-tree utility
-				sumSU += transaction.getUtilities()[i];
+				
 				// we add the current sub-tree utility to the utility-bin of the item
 				utilityBinArraySU[item] += sumSU;
+				sumSU -= transaction.getUtilities()[i];
 			}
 			for (int itemParent : transaction.parentsInTransaction.keySet()) {
-				sumSU = transaction.OldTU;
+				sumSU = transaction.transactionUtility;
 				// For each item when reading the transaction backward
 				for (int i = 0; i < transaction.items.length; i++) {
 					// get the item
@@ -576,25 +574,26 @@ public class AlgoFEACP {
 			utilityBinArraySU[item] = 0;
 			utilityBinArrayLU[item] = 0;
 		}
-		double sumRemainingUtility;
+		float sumRemainingUtility;
 		for (Transaction transaction : transactionsPe) {
 			transactionReadingCount++;
-			sumRemainingUtility = 0;
+			sumRemainingUtility = transaction.transactionUtility;
 
-			for (int i = transaction.getItems().length - 1; i >= 0; i--) {
+			for (int i = 0; i < transaction.getItems().length ; i++) {
 				// get the item
 				int item = transaction.getItems()[i];
 				
 					// We add the utility of this item to the sum of remaining utility
-					sumRemainingUtility += transaction.getUtilities()[i];
+					
 					// We update the sub-tree utility of that item in its utility-bin
 					utilityBinArraySU[item] += sumRemainingUtility + transaction.prefixUtility;
 					// We update the local utility of that item in its utility-bin
 					utilityBinArrayLU[item] += transaction.prefixUtility+transaction.transactionUtility;
+					sumRemainingUtility -= transaction.getUtilities()[i];
 
 			}
 			for (Integer itemParent : transaction.parentsInTransaction.keySet()) {
-				double sumU = transaction.transactionUtility;
+				float sumU = transaction.transactionUtility;
 				// We add the utility of this item to the sum of remaining utility
 				for (int i = 0; i < transaction.getItems().length; i++) {
 					int item = transaction.getItems()[i];
@@ -621,21 +620,21 @@ public class AlgoFEACP {
 	 * @param itemset the itemset
 	 * @throws IOException if error while writting to output file
 	 */
-	private void output(int tempPosition, Double utility) throws IOException {
+	private void output(int tempPosition, float utility) throws IOException {
 
 		patternCount++;
 
-//		StringBuffer buffer = new StringBuffer();
-//		for (int i = 0; i <= tempPosition; i++) {
-//			buffer.append(temp[i]);
-//			if (i != tempPosition) {
-//				buffer.append('	');
-//			}
-//		} // append the utility of the itemset
-//		buffer.append(" #UTIL: ");
-//		buffer.append(utility);
-//
-//		System.out.println(buffer.toString());
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i <= tempPosition; i++) {
+			buffer.append(temp[i]);
+			if (i != tempPosition) {
+				buffer.append('	');
+			}
+		} // append the utility of the itemset
+		buffer.append(" #UTIL: ");
+		buffer.append(utility);
+
+		//System.out.println(buffer.toString());
 
 	}
 
@@ -695,22 +694,28 @@ public class AlgoFEACP {
 		} else {
 			if (levelOfItem1 > levelOfItem2) {
 				TaxonomyNode parentItem1 = nodeItem1.getParent();
-				while (parentItem1.getData() != -1) {
-					if (parentItem1.getData() == nodeItem2.getData()) {
-						return true;
-					}
+				while (parentItem1.getLevel() != levelOfItem2) {					
 					parentItem1 = parentItem1.getParent();
 				}
-				return false;
+				if (parentItem1.getData() == nodeItem2.getData()) {
+					return true;
+				}
+				else {
+					return false;
+				}
+				
 			} else {
 				TaxonomyNode parentItem2 = nodeItem2.getParent();
-				while (parentItem2.getData() != -1) {
-					if (parentItem2.getData() == nodeItem1.getData()) {
-						return true;
-					}
+				while (parentItem2.getLevel() != levelOfItem1) {
+					
 					parentItem2 = parentItem2.getParent();
 				}
-				return false;
+				if (parentItem2.getData() == nodeItem1.getData()) {
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 		}
 	}
