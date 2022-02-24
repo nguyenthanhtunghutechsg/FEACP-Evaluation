@@ -521,7 +521,7 @@ public class AlgoFEACP {
 	 */
 	public void useUtilityBinArrayToCalculateSubtreeUtilityFirstTime(Dataset dataset) {
 
-		float sumSU;
+		double sumSU;
 		// Scan the database to fill the utility-bins of each item
 		// For each transaction
 		for (Transaction transaction : dataset.getTransactions()) {
@@ -574,7 +574,7 @@ public class AlgoFEACP {
 			utilityBinArraySU[item] = 0;
 			utilityBinArrayLU[item] = 0;
 		}
-		float sumRemainingUtility;
+		double sumRemainingUtility;
 		for (Transaction transaction : transactionsPe) {
 			transactionReadingCount++;
 			sumRemainingUtility = transaction.transactionUtility;
@@ -593,7 +593,7 @@ public class AlgoFEACP {
 
 			}
 			for (Integer itemParent : transaction.parentsInTransaction.keySet()) {
-				float sumU = transaction.transactionUtility;
+				double sumU = transaction.transactionUtility;
 				// We add the utility of this item to the sum of remaining utility
 				for (int i = 0; i < transaction.getItems().length; i++) {
 					int item = transaction.getItems()[i];
