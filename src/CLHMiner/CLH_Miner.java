@@ -156,13 +156,13 @@ public class CLH_Miner {
 				// Copy the transaction into lists but
 				// without items with TWU < minutility
 
-				double remainingUtility = 0;
+				
 				// long newTWU = 0; // NEW OPTIMIZATION
 				double TU = Double.parseDouble(split[1]);
 				// Create a list to store items
 				List<Pair> revisedTransaction = new ArrayList<Pair>();
 				// for each item
-
+				double remainingUtility = ;
 				HashMap<Integer, Double> mapParentToUtility = new HashMap<Integer, Double>();
 
 				for (int i = 0; i < items.length; i++) {
