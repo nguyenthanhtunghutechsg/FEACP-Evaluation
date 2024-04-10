@@ -197,7 +197,7 @@ public class CLH_Miner {
 					Pair pair = revisedTransaction.get(i);
 					remainingUtility = remainingUtility - pair.utility;
 					UtilityList utilityListOfItem = mapItemToUtilityList.get(pair.item);
-					Element element = new Element(tid, pair.utility, remainingUtility, remainingUtility);
+					Element element = new Element(tid, pair.utility, remainingUtility, TU);
 					utilityListOfItem.addElement(element);
 				}
 				double CountUtility = TU;
@@ -213,7 +213,7 @@ public class CLH_Miner {
 					UtilityList utilityListOfItem = mapItemToUtilityList.get(itemParent);
 					if (utilityListOfItem != null) {
 						Element element = new Element(tid, mapParentToUtility.get(itemParent), CountUtilityOfEachItem,
-								TU-mapParentToUtility.get(itemParent);
+								TU;
 						utilityListOfItem.addElement(element);
 					}
 
