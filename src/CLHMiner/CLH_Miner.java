@@ -162,7 +162,7 @@ public class CLH_Miner {
 				// Create a list to store items
 				List<Pair> revisedTransaction = new ArrayList<Pair>();
 				// for each item
-				double remainingUtility = ;
+				double remainingUtility = TU;
 				HashMap<Integer, Double> mapParentToUtility = new HashMap<Integer, Double>();
 
 				for (int i = 0; i < items.length; i++) {
@@ -197,7 +197,7 @@ public class CLH_Miner {
 					Pair pair = revisedTransaction.get(i);
 					remainingUtility = remainingUtility - pair.utility;
 					UtilityList utilityListOfItem = mapItemToUtilityList.get(pair.item);
-					Element element = new Element(tid, pair.utility, remainingUtility, TU);
+					Element element = new Element(tid, pair.utility, remainingUtility, remainingUtility);
 					utilityListOfItem.addElement(element);
 				}
 				double CountUtility = TU;
@@ -213,7 +213,7 @@ public class CLH_Miner {
 					UtilityList utilityListOfItem = mapItemToUtilityList.get(itemParent);
 					if (utilityListOfItem != null) {
 						Element element = new Element(tid, mapParentToUtility.get(itemParent), CountUtilityOfEachItem,
-								TU);
+								TU-mapParentToUtility.get(itemParent);
 						utilityListOfItem.addElement(element);
 					}
 
